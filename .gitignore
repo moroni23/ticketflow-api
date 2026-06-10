@@ -1,0 +1,47 @@
+# Compiled files
+target/
+*.class
+
+# Logs
+*.log
+logs/
+
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+# Eclipse / STS
+.project
+.classpath
+.settings/
+.springBeans
+.sts4-cache/
+
+# VS Code
+.vscode/
+
+# Maven
+.mvn/wrapper/maven-wrapper.jar
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Environment variables / local config
+.env
+.env.*
+application-local.properties
+application-dev.properties
+application-prod.properties
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+
+# Test reports
+surefire-reports/
+failsafe-reports/

@@ -1,0 +1,15 @@
+package com.moroni.ticketflow.adapters.in.web.health;
+
+
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class HealthCheckController {
+
+    @GetMapping("/health")
+    public String health() {
+        return "TicketFlow API is running";
+    }
+}
