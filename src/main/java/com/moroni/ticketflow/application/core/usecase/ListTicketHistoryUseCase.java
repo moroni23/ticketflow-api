@@ -27,12 +27,25 @@ public class ListTicketHistoryUseCase implements ListTicketHistoryInputPort {
             UUID authenticatedUserId,
             UserRole authenticatedUserRole
     ) {
-        validateTicketAccessUseCase.validateAccess(
+        validateTicketAccessUseCase.validate(
                 ticketId,
                 authenticatedUserId,
                 authenticatedUserRole
         );
 
-        return ticketHistoryRepositoryOutputPort.findByTicketIdOrderByCreatedAtAsc(ticketId);
+        return ticketHistoryRepositoryOutputPort.findByTicketId(ticketId);
+    }
+
+    @Override
+    public List<TicketHistory> list(
+            UUID ticketId,
+            UUID authenticatedUserId,
+            UserRole authenticatedUserRole
+    ) {
+        return listByTicketId(
+                ticketId,
+                authenticatedUserId,
+                authenticatedUserRole
+        );
     }
 }

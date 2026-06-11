@@ -52,6 +52,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/support-queues").authenticated()
 
                         // Ticket actions
+                        .requestMatchers(HttpMethod.GET, "/api/tickets/assigned-to-me").hasAnyRole("ADMIN", "TECHNICIAN")
                         .requestMatchers(HttpMethod.PATCH, "/api/tickets/{id}/assign/{technicianId}").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/api/tickets/{id}/status").hasAnyRole("ADMIN", "TECHNICIAN")
                         .requestMatchers(HttpMethod.PATCH, "/api/tickets/{id}/priority").hasAnyRole("ADMIN", "TECHNICIAN")

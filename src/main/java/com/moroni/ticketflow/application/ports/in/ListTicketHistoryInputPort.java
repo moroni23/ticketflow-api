@@ -13,4 +13,10 @@ public interface ListTicketHistoryInputPort {
             UUID authenticatedUserId,
             UserRole authenticatedUserRole
     );
+
+    List<TicketHistory> list(
+            UUID ticketId,
+            UUID authenticatedUserId,
+            UserRole authenticatedUserRole
+    );
 }

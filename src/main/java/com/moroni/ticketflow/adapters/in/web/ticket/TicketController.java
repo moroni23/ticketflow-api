@@ -13,6 +13,7 @@ import com.moroni.ticketflow.application.core.domain.UserRole;
 import com.moroni.ticketflow.application.ports.in.AssignTicketInputPort;
 import com.moroni.ticketflow.application.ports.in.CreateTicketInputPort;
 import com.moroni.ticketflow.application.ports.in.FindTicketByIdInputPort;
+import com.moroni.ticketflow.application.ports.in.SearchAssignedTicketsInputPort;
 import com.moroni.ticketflow.application.ports.in.SearchTicketsInputPort;
 import com.moroni.ticketflow.application.ports.in.TicketDetailsInputPort;
 import com.moroni.ticketflow.application.ports.in.UpdateTicketPriorityInputPort;
@@ -41,6 +42,7 @@ public class TicketController {
     private final UpdateTicketSupportQueueInputPort updateTicketSupportQueueInputPort;
     private final AssignTicketInputPort assignTicketInputPort;
     private final SearchTicketsInputPort searchTicketsInputPort;
+    private final SearchAssignedTicketsInputPort searchAssignedTicketsInputPort;
     private final TicketDetailsInputPort ticketDetailsInputPort;
 
     public TicketController(
@@ -51,6 +53,7 @@ public class TicketController {
             UpdateTicketSupportQueueInputPort updateTicketSupportQueueInputPort,
             AssignTicketInputPort assignTicketInputPort,
             SearchTicketsInputPort searchTicketsInputPort,
+            SearchAssignedTicketsInputPort searchAssignedTicketsInputPort,
             TicketDetailsInputPort ticketDetailsInputPort
     ) {
         this.createTicketInputPort = createTicketInputPort;
@@ -60,6 +63,7 @@ public class TicketController {
         this.updateTicketSupportQueueInputPort = updateTicketSupportQueueInputPort;
         this.assignTicketInputPort = assignTicketInputPort;
         this.searchTicketsInputPort = searchTicketsInputPort;
+        this.searchAssignedTicketsInputPort = searchAssignedTicketsInputPort;
         this.ticketDetailsInputPort = ticketDetailsInputPort;
     }
 
@@ -108,6 +112,37 @@ public class TicketController {
                 size,
                 authenticatedUserId,
                 authenticatedUserRole
+        );
+
+        PageResult<TicketDetails> ticketDetailsPage = ticketDetailsInputPort.enrichPage(tickets);
+
+        PageResponse<TicketResponse> response = PageResponse.fromPageResult(
+                ticketDetailsPage,
+                TicketResponse::fromDomain
+        );
+
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "Search tickets assigned to me", description = "Returns tickets assigned to the authenticated admin or technician.")
+    @GetMapping("/assigned-to-me")
+    public ResponseEntity<PageResponse<TicketResponse>> searchAssignedToMe(
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String priority,
+            @RequestParam(required = false) UUID supportQueueId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            Authentication authentication
+    ) {
+        UUID authenticatedUserId = (UUID) authentication.getPrincipal();
+
+        PageResult<Ticket> tickets = searchAssignedTicketsInputPort.searchAssignedToMe(
+                status,
+                priority,
+                supportQueueId,
+                page,
+                size,
+                authenticatedUserId
         );
 
         PageResult<TicketDetails> ticketDetailsPage = ticketDetailsInputPort.enrichPage(tickets);

@@ -3,6 +3,7 @@ package com.moroni.ticketflow.config;
 import com.moroni.ticketflow.application.core.usecase.AssignTicketUseCase;
 import com.moroni.ticketflow.application.core.usecase.CreateTicketUseCase;
 import com.moroni.ticketflow.application.core.usecase.FindTicketByIdUseCase;
+import com.moroni.ticketflow.application.core.usecase.SearchAssignedTicketsUseCase;
 import com.moroni.ticketflow.application.core.usecase.SearchTicketsUseCase;
 import com.moroni.ticketflow.application.core.usecase.UpdateTicketPriorityUseCase;
 import com.moroni.ticketflow.application.core.usecase.UpdateTicketStatusUseCase;
@@ -48,6 +49,13 @@ public class TicketConfig {
             TicketRepositoryOutputPort ticketRepositoryOutputPort
     ) {
         return new SearchTicketsUseCase(ticketRepositoryOutputPort);
+    }
+
+    @Bean
+    public SearchAssignedTicketsUseCase searchAssignedTicketsUseCase(
+            TicketRepositoryOutputPort ticketRepositoryOutputPort
+    ) {
+        return new SearchAssignedTicketsUseCase(ticketRepositoryOutputPort);
     }
 
     @Bean
