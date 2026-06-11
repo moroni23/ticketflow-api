@@ -4,6 +4,7 @@ import com.moroni.ticketflow.adapters.in.web.common.response.PageResponse;
 import com.moroni.ticketflow.adapters.in.web.ticket.request.CreateTicketRequest;
 import com.moroni.ticketflow.adapters.in.web.ticket.request.UpdateTicketPriorityRequest;
 import com.moroni.ticketflow.adapters.in.web.ticket.request.UpdateTicketStatusRequest;
+import com.moroni.ticketflow.adapters.in.web.ticket.request.UpdateTicketSupportQueueRequest;
 import com.moroni.ticketflow.adapters.in.web.ticket.response.TicketResponse;
 import com.moroni.ticketflow.application.core.domain.PageResult;
 import com.moroni.ticketflow.application.core.domain.Ticket;
@@ -16,6 +17,7 @@ import com.moroni.ticketflow.application.ports.in.SearchTicketsInputPort;
 import com.moroni.ticketflow.application.ports.in.TicketDetailsInputPort;
 import com.moroni.ticketflow.application.ports.in.UpdateTicketPriorityInputPort;
 import com.moroni.ticketflow.application.ports.in.UpdateTicketStatusInputPort;
+import com.moroni.ticketflow.application.ports.in.UpdateTicketSupportQueueInputPort;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -36,6 +38,7 @@ public class TicketController {
     private final FindTicketByIdInputPort findTicketByIdInputPort;
     private final UpdateTicketStatusInputPort updateTicketStatusInputPort;
     private final UpdateTicketPriorityInputPort updateTicketPriorityInputPort;
+    private final UpdateTicketSupportQueueInputPort updateTicketSupportQueueInputPort;
     private final AssignTicketInputPort assignTicketInputPort;
     private final SearchTicketsInputPort searchTicketsInputPort;
     private final TicketDetailsInputPort ticketDetailsInputPort;
@@ -45,6 +48,7 @@ public class TicketController {
             FindTicketByIdInputPort findTicketByIdInputPort,
             UpdateTicketStatusInputPort updateTicketStatusInputPort,
             UpdateTicketPriorityInputPort updateTicketPriorityInputPort,
+            UpdateTicketSupportQueueInputPort updateTicketSupportQueueInputPort,
             AssignTicketInputPort assignTicketInputPort,
             SearchTicketsInputPort searchTicketsInputPort,
             TicketDetailsInputPort ticketDetailsInputPort
@@ -53,6 +57,7 @@ public class TicketController {
         this.findTicketByIdInputPort = findTicketByIdInputPort;
         this.updateTicketStatusInputPort = updateTicketStatusInputPort;
         this.updateTicketPriorityInputPort = updateTicketPriorityInputPort;
+        this.updateTicketSupportQueueInputPort = updateTicketSupportQueueInputPort;
         this.assignTicketInputPort = assignTicketInputPort;
         this.searchTicketsInputPort = searchTicketsInputPort;
         this.ticketDetailsInputPort = ticketDetailsInputPort;
@@ -174,6 +179,30 @@ public class TicketController {
         Ticket ticket = updateTicketPriorityInputPort.updatePriority(
                 id,
                 request.getPriority(),
+                authenticatedUserId,
+                authenticatedUserRole
+        );
+
+        TicketDetails ticketDetails = ticketDetailsInputPort.enrich(ticket);
+
+        TicketResponse response = TicketResponse.fromDomain(ticketDetails);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "Move ticket to another support queue", description = "Moves a ticket from its current support queue to another support queue.")
+    @PatchMapping("/{id}/support-queue")
+    public ResponseEntity<TicketResponse> updateSupportQueue(
+            @PathVariable UUID id,
+            @RequestBody @Valid UpdateTicketSupportQueueRequest request,
+            Authentication authentication
+    ) {
+        UUID authenticatedUserId = (UUID) authentication.getPrincipal();
+        UserRole authenticatedUserRole = extractUserRole(authentication);
+
+        Ticket ticket = updateTicketSupportQueueInputPort.updateSupportQueue(
+                id,
+                request.getSupportQueueId(),
                 authenticatedUserId,
                 authenticatedUserRole
         );

@@ -51,18 +51,23 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/support-queues").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/support-queues").authenticated()
 
-                        // Tickets - actions with specific permissions
-                        .requestMatchers(HttpMethod.PATCH, "/api/tickets/*/assign/*").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PATCH, "/api/tickets/*/status").hasAnyRole("ADMIN", "TECHNICIAN")
-                        .requestMatchers(HttpMethod.PATCH, "/api/tickets/*/priority").hasAnyRole("ADMIN", "TECHNICIAN")
+                        // Ticket actions
+                        .requestMatchers(HttpMethod.PATCH, "/api/tickets/{id}/assign/{technicianId}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/api/tickets/{id}/status").hasAnyRole("ADMIN", "TECHNICIAN")
+                        .requestMatchers(HttpMethod.PATCH, "/api/tickets/{id}/priority").hasAnyRole("ADMIN", "TECHNICIAN")
+                        .requestMatchers(HttpMethod.PATCH, "/api/tickets/{id}/support-queue").hasAnyRole("ADMIN", "TECHNICIAN")
 
-                        // Tickets - general authenticated access
+                        // Tickets
                         .requestMatchers(HttpMethod.POST, "/api/tickets").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/tickets").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/api/tickets/*").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/api/tickets/*/comments").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/api/tickets/*/comments").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/api/tickets/*/history").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/tickets/{id}").authenticated()
+
+                        // Comments
+                        .requestMatchers(HttpMethod.POST, "/api/tickets/{ticketId}/comments").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/tickets/{ticketId}/comments").authenticated()
+
+                        // History
+                        .requestMatchers(HttpMethod.GET, "/api/tickets/{ticketId}/history").authenticated()
 
                         // Any other endpoint
                         .anyRequest().authenticated()

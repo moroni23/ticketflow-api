@@ -6,13 +6,16 @@ import com.moroni.ticketflow.application.core.exception.TechnicianNotAssignedExc
 import com.moroni.ticketflow.application.core.exception.TicketNotFoundException;
 import com.moroni.ticketflow.application.ports.out.TicketRepositoryOutputPort;
 
+import java.util.Objects;
 import java.util.UUID;
 
 public class ValidateTicketTechnicianAccessUseCase {
 
     private final TicketRepositoryOutputPort ticketRepositoryOutputPort;
 
-    public ValidateTicketTechnicianAccessUseCase(TicketRepositoryOutputPort ticketRepositoryOutputPort) {
+    public ValidateTicketTechnicianAccessUseCase(
+            TicketRepositoryOutputPort ticketRepositoryOutputPort
+    ) {
         this.ticketRepositoryOutputPort = ticketRepositoryOutputPort;
     }
 
@@ -24,15 +27,29 @@ public class ValidateTicketTechnicianAccessUseCase {
         Ticket ticket = ticketRepositoryOutputPort.findById(ticketId)
                 .orElseThrow(() -> new TicketNotFoundException(ticketId));
 
-        if (authenticatedUserRole == UserRole.ADMIN) {
-            return ticket;
+        validate(
+                ticket,
+                authenticatedUserId,
+                authenticatedUserRole
+        );
+
+        return ticket;
+    }
+
+    public void validate(
+            Ticket ticket,
+            UUID authenticatedUserId,
+            UserRole authenticatedUserRole
+    ) {
+        if (UserRole.ADMIN.equals(authenticatedUserRole)) {
+            return;
         }
 
-        if (authenticatedUserRole == UserRole.TECHNICIAN
-                && authenticatedUserId.equals(ticket.getAssignedToUserId())) {
-            return ticket;
+        if (UserRole.TECHNICIAN.equals(authenticatedUserRole)
+                && Objects.equals(ticket.getAssignedToUserId(), authenticatedUserId)) {
+            return;
         }
 
-        throw new TechnicianNotAssignedException(ticketId);
+        throw new TechnicianNotAssignedException(ticket.getId());
     }
 }

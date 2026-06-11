@@ -98,6 +98,11 @@ public class Ticket {
         }
     }
 
+    public void changeSupportQueue(UUID newSupportQueueId) {
+        this.supportQueueId = newSupportQueueId;
+        this.updatedAt = LocalDateTime.now();
+    }
+
     public UUID getId() {
         return id;
     }
