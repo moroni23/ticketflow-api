@@ -50,6 +50,8 @@ public class SecurityConfig {
                         // Support Queues
                         .requestMatchers(HttpMethod.POST, "/api/support-queues").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/support-queues").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/support-queues/{queueId}/technicians/{technicianId}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/support-queues/{queueId}/technicians").hasRole("ADMIN")
 
                         // Ticket actions
                         .requestMatchers(HttpMethod.GET, "/api/tickets/assigned-to-me").hasAnyRole("ADMIN", "TECHNICIAN")
