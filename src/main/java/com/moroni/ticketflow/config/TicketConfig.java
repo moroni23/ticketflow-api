@@ -11,6 +11,7 @@ import com.moroni.ticketflow.application.core.usecase.UpdateTicketSupportQueueUs
 import com.moroni.ticketflow.application.core.usecase.ValidateTicketTechnicianAccessUseCase;
 import com.moroni.ticketflow.application.ports.out.CategoryRepositoryOutputPort;
 import com.moroni.ticketflow.application.ports.out.SupportQueueRepositoryOutputPort;
+import com.moroni.ticketflow.application.ports.out.SupportQueueTechnicianRepositoryOutputPort;
 import com.moroni.ticketflow.application.ports.out.TicketHistoryRepositoryOutputPort;
 import com.moroni.ticketflow.application.ports.out.TicketRepositoryOutputPort;
 import com.moroni.ticketflow.application.ports.out.UserRepositoryOutputPort;
@@ -103,12 +104,14 @@ public class TicketConfig {
     public AssignTicketUseCase assignTicketUseCase(
             TicketRepositoryOutputPort ticketRepositoryOutputPort,
             UserRepositoryOutputPort userRepositoryOutputPort,
-            TicketHistoryRepositoryOutputPort ticketHistoryRepositoryOutputPort
+            TicketHistoryRepositoryOutputPort ticketHistoryRepositoryOutputPort,
+            SupportQueueTechnicianRepositoryOutputPort supportQueueTechnicianRepositoryOutputPort
     ) {
         return new AssignTicketUseCase(
                 ticketRepositoryOutputPort,
                 userRepositoryOutputPort,
-                ticketHistoryRepositoryOutputPort
+                ticketHistoryRepositoryOutputPort,
+                supportQueueTechnicianRepositoryOutputPort
         );
     }
 }
